@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rashan Tracker | Checklist</title>
+    <meta name="description" content="Quickly track your kitchen stock and send shopping lists via WhatsApp." />
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;800&display=swap" rel="stylesheet">
+    <!-- PWA -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#2ecc71">
+    <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
+  </head>
+  <body>
+    <div id="app">
+      <header>
+        <h1>Rashan Tracker</h1>
+        <p class="subtitle">Quick Shopping Checklist</p>
+      </header>
+
+      <main id="checklist-container">
+        <!-- JS will populate categories here -->
+      </main>
+
+      <div class="content-footer"></div>
+
+      <div class="floating-action">
+        <button id="send-btn" class="send-btn">
+          <span class="btn-text">Send to WhatsApp</span>
+          <span id="selected-count" class="count-badge">0</span>
+          <span class="btn-icon" style="display:none;">
+            <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+              <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
+              <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+            </svg>
+            Sent
+          </span>
+        </button>
+      </div>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
