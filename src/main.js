@@ -8,10 +8,11 @@ const RASHAN_ITEMS = {
     "Cheeni", "Rass", "Biscuit", "Desi khand", "Colin", "Panni", "Daliya", 
     "Badaam", "Khishmish", "Oats", "Desi ghee", "Maggi", "Khade masale", "Poha", 
     "Paper foil", "Cheese", "Colgate", "Dove mask", "Ezee", "Dal", "Vermicelli", 
-    "Plain soda", "Flaovour soda", "Pop corn", "Ajinomoto", "Oregano"
+    "Plain soda", "Flavour soda", "Pop corn", "Ajinomoto", "Oregano",
+    "All out", "Treaty", "Cells", "Campure", "Pochaa"
   ],
   "Vegetables": [
-    "Onion", "Tomoato", "Potato", "Vegetable", "Hara dhaniya", "Hari mirchi", 
+    "Onion", "Tomato", "Potato", "Vegetable", "Hara dhaniya", "Hari mirchi", 
     "Gajar", "Mooli", "Kheera", "Lasan", "Adrak", "Nimbu"
   ],
   "Fruits": [
