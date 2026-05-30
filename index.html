@@ -2,47 +2,283 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Rashan Tracker | Checklist</title>
-    <meta name="description" content="Quickly track your kitchen stock and send shopping lists via WhatsApp." />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>RashanMate — Rashan List on WhatsApp</title>
+    <meta name="description" content="Create your rashan list and send it to WhatsApp in one tap. The simplest grocery list tool for Indian households." />
+    <meta name="keywords" content="rashan list, grocery list, WhatsApp, Indian household, shopping list" />
+    <meta name="author" content="RashanMate" />
+
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
     <!-- PWA -->
     <link rel="manifest" href="/manifest.json">
-    <meta name="theme-color" content="#2ecc71">
+    <meta name="theme-color" content="#0a0e27">
     <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3081/3081986.png">
+    <link rel="apple-touch-icon" href="/icons/icon-192.png">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   </head>
   <body>
+    <!-- Animated Background Mesh -->
+    <div class="bg-mesh" aria-hidden="true">
+      <div class="bg-orb bg-orb--1"></div>
+      <div class="bg-orb bg-orb--2"></div>
+      <div class="bg-orb bg-orb--3"></div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+      <span class="toast__icon"></span>
+      <span class="toast__text"></span>
+    </div>
+
     <div id="app">
-      <header>
-        <h1>Rashan Tracker</h1>
-        <p class="subtitle">Quick Shopping Checklist</p>
-      </header>
-
-      <main id="checklist-container">
-        <!-- JS will populate categories here -->
-      </main>
-
-      <div class="content-footer"></div>
-
-      <div class="floating-action">
-        <button id="send-btn" class="send-btn">
-          <span class="btn-text">Send to WhatsApp</span>
-          <span id="selected-count" class="count-badge">0</span>
-          <span class="btn-icon" style="display:none;">
-            <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
-              <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
-              <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
-            </svg>
-            Sent
-          </span>
+      <!-- ============================
+           SCREEN 1: ONBOARDING
+           ============================ -->
+      <section id="screen-onboarding" class="screen onboarding">
+        <!-- Theme toggle on onboarding -->
+        <button id="theme-toggle-onboarding" class="theme-toggle onboarding__theme-toggle" aria-label="Toggle theme">
+          <span class="theme-toggle__icon">🌙</span>
         </button>
+        <div class="onboarding__logo">🛒</div>
+        <div class="onboarding__brand">
+          <h1 class="onboarding__title">RashanMate</h1>
+          <p class="onboarding__tagline">Your kitchen's best friend</p>
+        </div>
+        <p class="onboarding__description">
+          Create your rashan list and send it on WhatsApp in one tap. No login, no fuss.
+        </p>
+        <form id="onboarding-form" class="onboarding__form" autocomplete="off">
+          <div class="input-group">
+            <span class="input-group__prefix">+91</span>
+            <input
+              id="onboarding-phone"
+              type="tel"
+              inputmode="numeric"
+              placeholder="WhatsApp number"
+              maxlength="10"
+              pattern="[0-9]{10}"
+              required
+              aria-label="WhatsApp phone number"
+            />
+          </div>
+          <button type="submit" class="btn-primary" id="onboarding-cta">
+            Get Started →
+          </button>
+        </form>
+        <button type="button" class="onboarding__skip" id="onboarding-skip">
+          Skip for now
+        </button>
+      </section>
+
+      <!-- ============================
+           SCREEN 2: LIST BUILDER
+           ============================ -->
+      <section id="screen-builder" class="screen builder">
+        <header class="builder__header">
+          <div class="builder__brand">
+            <span class="builder__logo">🛒</span>
+            <h1 class="builder__title">RashanMate</h1>
+          </div>
+          <div class="builder__header-actions">
+            <button id="theme-toggle-builder" class="theme-toggle" aria-label="Toggle theme">
+              <span class="theme-toggle__icon">🌙</span>
+            </button>
+            <button id="settings-btn" class="builder__settings-btn" aria-label="Settings">
+              ⚙️
+            </button>
+          </div>
+        </header>
+
+        <!-- Previous list banner (shown conditionally) -->
+        <div id="prev-list-banner" class="prev-list-banner hidden">
+          <div class="prev-list-banner__text">
+            <strong>📋 Previous list found!</strong><br/>
+            Continue where you left off?
+          </div>
+          <div class="prev-list-banner__actions">
+            <button id="load-prev-btn" class="prev-list-banner__btn prev-list-banner__btn--load">Load</button>
+            <button id="dismiss-prev-btn" class="prev-list-banner__btn prev-list-banner__btn--dismiss">New</button>
+          </div>
+        </div>
+
+        <!-- Search -->
+        <div class="search-bar">
+          <span class="search-bar__icon">🔍</span>
+          <input
+            id="search-input"
+            type="text"
+            placeholder="Search items..."
+            aria-label="Search grocery items"
+          />
+          <button id="search-clear" class="search-bar__clear" aria-label="Clear search">✕</button>
+        </div>
+
+        <!-- Items Container -->
+        <div id="items-container">
+          <!-- JS renders categories here -->
+        </div>
+
+        <!-- Floating Action -->
+        <div class="fab" id="builder-fab">
+          <div class="fab__inner">
+            <button id="review-btn" class="fab__review-btn" disabled>
+              <span class="wa-icon">📋</span>
+              <span>Review List</span>
+              <span id="fab-badge" class="fab__badge">0</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================
+           SCREEN 3: REVIEW & SEND
+           ============================ -->
+      <section id="screen-review" class="screen review">
+        <header class="review__header">
+          <button id="back-btn" class="review__back" aria-label="Go back">←</button>
+          <h1 class="review__title">Your List</h1>
+          <span id="review-count" class="review__count"></span>
+        </header>
+
+        <p id="review-date" class="review__date"></p>
+
+        <!-- WhatsApp Number Card -->
+        <div class="wa-number-card">
+          <span class="wa-number-card__icon">💬</span>
+          <div class="wa-number-card__info">
+            <div class="wa-number-card__label">Sending to WhatsApp</div>
+            <div id="review-wa-number" class="wa-number-card__number">—</div>
+          </div>
+          <button id="edit-wa-btn" class="wa-number-card__edit">Edit</button>
+        </div>
+
+        <!-- Review List Items -->
+        <div id="review-list" class="review-list">
+          <!-- JS renders items here -->
+        </div>
+
+        <!-- Send FAB -->
+        <div class="fab fab--send">
+          <div class="fab__inner">
+            <button id="send-btn" class="fab__send-btn">
+              <span class="wa-icon">💬</span>
+              <span id="send-btn-text">Send to WhatsApp</span>
+            </button>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- ============================
+         MODALS
+         ============================ -->
+
+    <!-- Quantity Editor Modal -->
+    <div id="qty-modal-overlay" class="modal-overlay">
+      <div class="modal">
+        <div class="modal__handle"></div>
+        <h2 class="modal__title" id="qty-modal-title">Set Quantity</h2>
+        <div class="modal__form">
+          <div class="input-group">
+            <span class="input-group__icon">📦</span>
+            <input
+              id="qty-input"
+              type="number"
+              inputmode="decimal"
+              placeholder="Quantity"
+              min="0.1"
+              step="0.5"
+              aria-label="Item quantity"
+            />
+          </div>
+          <div class="unit-selector" id="unit-selector">
+            <!-- JS renders unit buttons here -->
+          </div>
+          <div class="modal__actions">
+            <button id="qty-cancel" class="modal__btn modal__btn--cancel">Cancel</button>
+            <button id="qty-remove" class="modal__btn modal__btn--cancel" style="color: var(--danger);">Remove</button>
+            <button id="qty-confirm" class="modal__btn modal__btn--confirm">Done</button>
+          </div>
+        </div>
       </div>
     </div>
+
+    <!-- Add Custom Item Modal -->
+    <div id="custom-modal-overlay" class="modal-overlay">
+      <div class="modal">
+        <div class="modal__handle"></div>
+        <h2 class="modal__title">Add Custom Item</h2>
+        <div class="modal__form">
+          <div class="input-group">
+            <span class="input-group__icon">✏️</span>
+            <input
+              id="custom-name"
+              type="text"
+              placeholder="Item name"
+              maxlength="40"
+              aria-label="Custom item name"
+            />
+          </div>
+          <div class="modal__row">
+            <div class="input-group">
+              <span class="input-group__icon">📦</span>
+              <input
+                id="custom-qty"
+                type="number"
+                inputmode="decimal"
+                placeholder="Qty"
+                min="0.1"
+                step="0.5"
+                value="1"
+                aria-label="Custom item quantity"
+              />
+            </div>
+          </div>
+          <div class="unit-selector" id="custom-unit-selector">
+            <!-- JS renders unit buttons -->
+          </div>
+          <div class="modal__actions">
+            <button id="custom-cancel" class="modal__btn modal__btn--cancel">Cancel</button>
+            <button id="custom-confirm" class="modal__btn modal__btn--confirm">Add Item</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Edit WhatsApp Number Modal -->
+    <div id="wa-modal-overlay" class="modal-overlay">
+      <div class="modal">
+        <div class="modal__handle"></div>
+        <h2 class="modal__title">WhatsApp Number</h2>
+        <div class="modal__form">
+          <div class="input-group">
+            <span class="input-group__prefix">+91</span>
+            <input
+              id="wa-edit-input"
+              type="tel"
+              inputmode="numeric"
+              placeholder="10-digit number"
+              maxlength="10"
+              pattern="[0-9]{10}"
+              aria-label="WhatsApp number"
+            />
+          </div>
+          <div class="modal__actions">
+            <button id="wa-edit-cancel" class="modal__btn modal__btn--cancel">Cancel</button>
+            <button id="wa-edit-confirm" class="modal__btn modal__btn--confirm">Save</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <script type="module" src="/src/main.js"></script>
   </body>
 </html>
