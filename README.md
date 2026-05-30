@@ -4,7 +4,7 @@ RashanMate is a simple rashan list maker for Indian households. Users can add gr
 
 ## Startup Hook
 
-Create your rashan list and send it on WhatsApp in one tap.
+"Rashan likho. WhatsApp karo." (Write your rashan list, send it to WhatsApp in one tap).
 
 ## Version 1 Goal
 
